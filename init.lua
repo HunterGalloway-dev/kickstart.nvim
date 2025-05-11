@@ -326,7 +326,36 @@ require('lazy').setup({ -- NOTE: Plugins can be added with a link (or for a gith
 --
 -- Then, because we use the `opts` key (recommended), the configuration runs
 -- after the plugin has been loaded as `require(MODULE).setup(opts)`.
-{ -- Useful plugin to show you pending keybinds.
+{
+    "folke/trouble.nvim",
+    dependencies = {"nvim-tree/nvim-web-devicons"},
+    opts = {},
+    keys = {{
+        "<leader>xx",
+        "<cmd>TroubleToggle<cr>",
+        desc = "Toggle Trouble"
+    }, {
+        "<leader>xw",
+        "<cmd>TroubleToggle workspace_diagnostics<cr>",
+        desc = "Workspace Diagnostics"
+    }, {
+        "<leader>xd",
+        "<cmd>TroubleToggle document_diagnostics<cr>",
+        desc = "Document Diagnostics"
+    }, {
+        "<leader>xq",
+        "<cmd>TroubleToggle quickfix<cr>",
+        desc = "Quickfix"
+    }, {
+        "<leader>xl",
+        "<cmd>TroubleToggle loclist<cr>",
+        desc = "Location List"
+    }, {
+        "grr",
+        "<cmd>TroubleToggle lsp_references<cr>",
+        desc = "LSP References"
+    }}
+}, { -- Useful plugin to show you pending keybinds.
     'folke/which-key.nvim',
     event = 'VimEnter', -- Sets the loading event to 'VimEnter'
     opts = {
@@ -745,7 +774,7 @@ require('lazy').setup({ -- NOTE: Plugins can be added with a link (or for a gith
         --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
         local servers = {
             -- clangd = {},
-
+            eslint = {},
             dockerls = {},
             docker_compose_language_service = {},
             gopls = {
@@ -813,7 +842,7 @@ require('lazy').setup({ -- NOTE: Plugins can be added with a link (or for a gith
         local ensure_installed = vim.tbl_keys(servers or {})
         vim.list_extend(ensure_installed, {'stylua', -- Used to format Lua code
         'goimports', 'gofumpt', 'prettier', 'dockerfile-language-server', 'hadolint', 'typescript-language-server',
-                                           'tailwindcss-language-server'})
+                                           'tailwindcss-language-server', 'eslint-lsp'})
         require('mason-tool-installer').setup {
             ensure_installed = ensure_installed
         }
@@ -901,17 +930,15 @@ require('lazy').setup({ -- NOTE: Plugins can be added with a link (or for a gith
             end
             return 'make install_jsregexp'
         end)(),
-        dependencies = {
-            -- `friendly-snippets` contains a variety of premade snippets.
-            --    See the README about individual language/framework/plugin snippets:
-            --    https://github.com/rafamadriz/friendly-snippets
-            -- {
-            --   'rafamadriz/friendly-snippets',
-            --   config = function()
-            --     require('luasnip.loaders.from_vscode').lazy_load()
-            --   end,
-            -- },
-        },
+        dependencies = { -- `friendly-snippets` contains a variety of premade snippets.
+        --    See the README about individual language/framework/plugin snippets:
+        --    https://github.com/rafamadriz/friendly-snippets
+        {
+            'rafamadriz/friendly-snippets',
+            config = function()
+                require('luasnip.loaders.from_vscode').lazy_load()
+            end
+        }},
         opts = {}
     }, 'folke/lazydev.nvim'},
     --- @module 'blink.cmp'
