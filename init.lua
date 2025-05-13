@@ -90,7 +90,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.o`
@@ -101,7 +101,7 @@ vim.g.have_nerd_font = false
 vim.o.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.o.relativenumber = true
+vim.o.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = 'a'
@@ -327,43 +327,43 @@ require('lazy').setup({ -- NOTE: Plugins can be added with a link (or for a gith
   --
   -- Then, because we use the `opts` key (recommended), the configuration runs
   -- after the plugin has been loaded as `require(MODULE).setup(opts)`.
-  {
-    'folke/trouble.nvim',
-    dependencies = { 'nvim-tree/nvim-web-devicons' },
-    opts = {},
-    keys = {
-      {
-        '<leader>xx',
-        '<cmd>TroubleToggle<cr>',
-        desc = 'Toggle Trouble',
-      },
-      {
-        '<leader>xw',
-        '<cmd>TroubleToggle workspace_diagnostics<cr>',
-        desc = 'Workspace Diagnostics',
-      },
-      {
-        '<leader>xd',
-        '<cmd>TroubleToggle document_diagnostics<cr>',
-        desc = 'Document Diagnostics',
-      },
-      {
-        '<leader>xq',
-        '<cmd>TroubleToggle quickfix<cr>',
-        desc = 'Quickfix',
-      },
-      {
-        '<leader>xl',
-        '<cmd>TroubleToggle loclist<cr>',
-        desc = 'Location List',
-      },
-      {
-        'grr',
-        '<cmd>TroubleToggle lsp_references<cr>',
-        desc = 'LSP References',
-      },
+{
+  "folke/trouble.nvim",
+  opts = {}, -- for default options, refer to the configuration section for custom setup.
+  cmd = "Trouble",
+  keys = {
+    {
+      "<leader>xx",
+      "<cmd>Trouble diagnostics toggle<cr>",
+      desc = "Diagnostics (Trouble)",
+    },
+    {
+      "<leader>xX",
+      "<cmd>Trouble diagnostics toggle filter.buf=0<cr>",
+      desc = "Buffer Diagnostics (Trouble)",
+    },
+    {
+      "<leader>cs",
+      "<cmd>Trouble symbols toggle focus=false<cr>",
+      desc = "Symbols (Trouble)",
+    },
+    {
+      "<leader>cl",
+      "<cmd>Trouble lsp toggle focus=false win.position=right<cr>",
+      desc = "LSP Definitions / references / ... (Trouble)",
+    },
+    {
+      "<leader>xL",
+      "<cmd>Trouble loclist toggle<cr>",
+      desc = "Location List (Trouble)",
+    },
+    {
+      "<leader>xQ", 
+      "<cmd>Trouble qflist toggle<cr>",
+      desc = "Quickfix List (Trouble)",
     },
   },
+},
   { -- Useful plugin to show you pending keybinds.
     'folke/which-key.nvim',
     event = 'VimEnter', -- Sets the loading event to 'VimEnter'
@@ -1013,9 +1013,6 @@ require('lazy').setup({ -- NOTE: Plugins can be added with a link (or for a gith
         -- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
         -- Adjusts spacing to ensure icons are aligned
         nerd_font_variant = 'mono',
-        completion = {
-          show_source = true,
-        },
       },
 
       completion = {
@@ -1028,9 +1025,9 @@ require('lazy').setup({ -- NOTE: Plugins can be added with a link (or for a gith
         menu = {
           draw = {
             columns = {
-              { "kind_icon" },
-              { "label", "label_description", gap = 1 },
-              { "source_name" }, -- This line shows the source (LSP, Snippet, etc.)
+              { 'kind_icon' },
+              { 'label', 'label_description', gap = 1 },
+              { 'source_name' }, -- This line shows the source (LSP, Snippet, etc.)
             },
           },
         },
@@ -1118,6 +1115,23 @@ require('lazy').setup({ -- NOTE: Plugins can be added with a link (or for a gith
       -- - sr)'  - [S]urround [R]eplace [)] [']
       require('mini.surround').setup()
 
+      -- Comment/uncomment lines with ease
+      -- Examples:
+      -- `gcc` - Toggle comment for current line
+      -- `gc{motion}` - Toggle comments for motion (e.g. `gcip` to comment inside paragraph)
+      -- `gc` in visual mode - Toggle comments for selection
+      require('mini.comment').setup({
+        -- Hook after successful commenting/uncommenting
+        hooks = {
+          post = function()
+            -- Return cursor to original position after commenting
+            -- for good user experience
+            local col = math.min(vim.fn.col('.'), #vim.fn.getline('.'))
+            vim.api.nvim_win_set_cursor(0, {vim.fn.line('.'), col - 1})
+          end,
+        },
+      })
+
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
       --  and try some other statusline plugin
@@ -1204,8 +1218,8 @@ require('lazy').setup({ -- NOTE: Plugins can be added with a link (or for a gith
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
   -- require 'kickstart.plugins.debug',
-  -- require 'kickstart.plugins.indent_line',
-  -- require 'kickstart.plugins.lint',
+  require 'kickstart.plugins.indent_line',
+  require 'kickstart.plugins.lint',
   require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.neo-tree',
   require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
@@ -1241,7 +1255,6 @@ require('lazy').setup({ -- NOTE: Plugins can be added with a link (or for a gith
     },
   },
 })
-
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
